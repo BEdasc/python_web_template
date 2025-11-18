@@ -1,0 +1,73 @@
+{% extends "layouts/admin.html" %}
+
+{% block title %}Télécharger un média - Admin{% endblock %}
+
+{% block admin_content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2>Télécharger un fichier</h2>
+    <a href="{{ url_for('admin.media') }}" class="btn btn-secondary">
+        <i class="bi bi-arrow-left"></i> Retour
+    </a>
+</div>
+
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-body p-4">
+                <form method="POST" enctype="multipart/form-data">
+                    {{ form.hidden_tag() }}
+
+                    <div class="mb-3">
+                        {{ form.file.label(class="form-label") }}
+                        {{ form.file(class="form-control" + (' is-invalid' if form.file.errors else '')) }}
+                        <small class="form-text text-muted">
+                            Formats acceptés: PNG, JPG, JPEG, GIF, WEBP, SVG (max 16MB)
+                        </small>
+                        {% if form.file.errors %}
+                            <div class="invalid-feedback">
+                                {% for error in form.file.errors %}{{ error }}{% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+
+                    <div class="mb-3">
+                        {{ form.alt_text.label(class="form-label") }}
+                        {{ form.alt_text(class="form-control", placeholder="Description de l'image pour l'accessibilité") }}
+                        <small class="form-text text-muted">
+                            Texte alternatif pour l'accessibilité (recommandé)
+                        </small>
+                    </div>
+
+                    <div class="mb-3">
+                        {{ form.file_type.label(class="form-label") }}
+                        <select name="file_type" id="file_type" class="form-select">
+                            <option value="image">Image</option>
+                            <option value="logo">Logo</option>
+                            <option value="icon">Icône</option>
+                            <option value="photo">Photo</option>
+                        </select>
+                    </div>
+
+                    <div class="d-grid">
+                        {{ form.submit(class="btn btn-success btn-lg") }}
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <div class="card mt-4">
+            <div class="card-header">
+                <strong>Conseils</strong>
+            </div>
+            <div class="card-body">
+                <ul class="mb-0">
+                    <li>Utilisez des noms de fichiers descriptifs</li>
+                    <li>Optimisez vos images avant de les télécharger pour un meilleur chargement</li>
+                    <li>Ajoutez toujours un texte alternatif pour l'accessibilité</li>
+                    <li>Formats recommandés: WEBP pour la compression, SVG pour les logos</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

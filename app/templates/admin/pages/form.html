@@ -1,0 +1,182 @@
+{% extends "layouts/admin.html" %}
+
+{% block title %}{{ title }} - Admin{% endblock %}
+
+{% block extra_css %}
+{{ super() }}
+<style>
+    .editor-toolbar {
+        background-color: #f8f9fa;
+        padding: 10px;
+        border: 1px solid #dee2e6;
+        border-radius: 5px 5px 0 0;
+        margin-bottom: -1px;
+    }
+
+    .editor-toolbar button {
+        margin-right: 5px;
+    }
+</style>
+{% endblock %}
+
+{% block admin_content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2>{{ title }}</h2>
+    <a href="{{ url_for('admin.pages') }}" class="btn btn-secondary">
+        <i class="bi bi-arrow-left"></i> Retour
+    </a>
+</div>
+
+<form method="POST">
+    {{ form.hidden_tag() }}
+
+    <div class="row">
+        <div class="col-md-8">
+            <div class="card mb-3">
+                <div class="card-body">
+                    <div class="mb-3">
+                        {{ form.title.label(class="form-label") }}
+                        {{ form.title(class="form-control form-control-lg" + (' is-invalid' if form.title.errors else ''), placeholder="Titre de la page") }}
+                        {% if form.title.errors %}
+                            <div class="invalid-feedback">
+                                {% for error in form.title.errors %}{{ error }}{% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+
+                    <div class="mb-3">
+                        {{ form.slug.label(class="form-label") }}
+                        <div class="input-group">
+                            <span class="input-group-text">/page/</span>
+                            {{ form.slug(class="form-control" + (' is-invalid' if form.slug.errors else ''), placeholder="mon-url") }}
+                        </div>
+                        <small class="form-text text-muted">Utilisez uniquement des lettres minuscules, chiffres et tirets</small>
+                        {% if form.slug.errors %}
+                            <div class="invalid-feedback d-block">
+                                {% for error in form.slug.errors %}{{ error }}{% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+
+                    <div class="mb-3">
+                        {{ form.content.label(class="form-label") }}
+                        <div class="editor-toolbar">
+                            <button type="button" class="btn btn-sm btn-outline-secondary" onclick="insertHTML('<strong>', '</strong>')">
+                                <i class="bi bi-type-bold"></i>
+                            </button>
+                            <button type="button" class="btn btn-sm btn-outline-secondary" onclick="insertHTML('<em>', '</em>')">
+                                <i class="bi bi-type-italic"></i>
+                            </button>
+                            <button type="button" class="btn btn-sm btn-outline-secondary" onclick="insertHTML('<h2>', '</h2>')">
+                                H2
+                            </button>
+                            <button type="button" class="btn btn-sm btn-outline-secondary" onclick="insertHTML('<h3>', '</h3>')">
+                                H3
+                            </button>
+                            <button type="button" class="btn btn-sm btn-outline-secondary" onclick="insertHTML('<p>', '</p>')">
+                                <i class="bi bi-paragraph"></i>
+                            </button>
+                            <button type="button" class="btn btn-sm btn-outline-secondary" onclick="insertHTML('<ul>\n  <li>', '</li>\n</ul>')">
+                                <i class="bi bi-list-ul"></i>
+                            </button>
+                        </div>
+                        {{ form.content(class="form-control" + (' is-invalid' if form.content.errors else ''), rows=15, style="border-radius: 0 0 5px 5px;") }}
+                        <small class="form-text text-muted">Vous pouvez utiliser du HTML dans le contenu</small>
+                        {% if form.content.errors %}
+                            <div class="invalid-feedback">
+                                {% for error in form.content.errors %}{{ error }}{% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card mb-3">
+                <div class="card-header">
+                    <strong>Publication</strong>
+                </div>
+                <div class="card-body">
+                    <div class="mb-3">
+                        <div class="form-check">
+                            {{ form.is_published(class="form-check-input") }}
+                            {{ form.is_published.label(class="form-check-label") }}
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <div class="form-check">
+                            {{ form.show_in_menu(class="form-check-input") }}
+                            {{ form.show_in_menu.label(class="form-check-label") }}
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        {{ form.menu_order.label(class="form-label") }}
+                        {{ form.menu_order(class="form-control") }}
+                        <small class="form-text text-muted">Ordre d'affichage dans le menu (0 = premier)</small>
+                    </div>
+
+                    <hr>
+
+                    <div class="d-grid">
+                        {{ form.submit(class="btn btn-primary btn-lg") }}
+                    </div>
+                </div>
+            </div>
+
+            {% if page %}
+            <div class="card">
+                <div class="card-header">
+                    <strong>Informations</strong>
+                </div>
+                <div class="card-body">
+                    <p class="mb-1"><small class="text-muted">Créée le</small><br>
+                    {{ page.created_at.strftime('%d/%m/%Y à %H:%M') }}</p>
+                    <p class="mb-1"><small class="text-muted">Dernière modification</small><br>
+                    {{ page.updated_at.strftime('%d/%m/%Y à %H:%M') }}</p>
+                    {% if page.created_by %}
+                    <p class="mb-0"><small class="text-muted">Créée par</small><br>
+                    {{ page.created_by.username }}</p>
+                    {% endif %}
+                </div>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</form>
+
+<script>
+function insertHTML(startTag, endTag) {
+    const textarea = document.getElementById('content');
+    const start = textarea.selectionStart;
+    const end = textarea.selectionEnd;
+    const selectedText = textarea.value.substring(start, end);
+    const beforeText = textarea.value.substring(0, start);
+    const afterText = textarea.value.substring(end);
+
+    textarea.value = beforeText + startTag + selectedText + endTag + afterText;
+    textarea.focus();
+    textarea.selectionStart = start + startTag.length;
+    textarea.selectionEnd = start + startTag.length + selectedText.length;
+}
+
+// Auto-generate slug from title
+document.getElementById('title').addEventListener('input', function(e) {
+    const slugField = document.getElementById('slug');
+    if (!slugField.dataset.manualEdit) {
+        const slug = e.target.value
+            .toLowerCase()
+            .normalize('NFD').replace(/[\u0300-\u036f]/g, '') // Remove accents
+            .replace(/[^a-z0-9]+/g, '-')
+            .replace(/^-+|-+$/g, '');
+        slugField.value = slug;
+    }
+});
+
+document.getElementById('slug').addEventListener('input', function() {
+    this.dataset.manualEdit = 'true';
+});
+</script>
+{% endblock %}
