@@ -1,0 +1,259 @@
+{% extends "layouts/admin.html" %}
+
+{% block title %}Apparence - Admin{% endblock %}
+
+{% block admin_content %}
+<h2 class="mb-4">Personnalisation du thème</h2>
+
+<div class="row">
+    <div class="col-md-8">
+        <div class="card mb-4">
+            <div class="card-header">
+                <strong>Paramètres généraux</strong>
+            </div>
+            <div class="card-body">
+                <form method="POST">
+                    {{ form.hidden_tag() }}
+
+                    <div class="mb-3">
+                        {{ form.site_name.label(class="form-label") }}
+                        {{ form.site_name(class="form-control" + (' is-invalid' if form.site_name.errors else '')) }}
+                        {% if form.site_name.errors %}
+                            <div class="invalid-feedback">
+                                {% for error in form.site_name.errors %}{{ error }}{% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+
+                    <hr class="my-4">
+
+                    <h5 class="mb-3">Couleurs du thème</h5>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            {{ form.primary_color.label(class="form-label") }}
+                            <div class="input-group">
+                                {{ form.primary_color(class="form-control form-control-color" + (' is-invalid' if form.primary_color.errors else ''), type="color") }}
+                                <input type="text" class="form-control" value="{{ form.primary_color.data }}" readonly>
+                            </div>
+                            {% if form.primary_color.errors %}
+                                <div class="invalid-feedback d-block">
+                                    {% for error in form.primary_color.errors %}{{ error }}{% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            {{ form.secondary_color.label(class="form-label") }}
+                            <div class="input-group">
+                                {{ form.secondary_color(class="form-control form-control-color" + (' is-invalid' if form.secondary_color.errors else ''), type="color") }}
+                                <input type="text" class="form-control" value="{{ form.secondary_color.data }}" readonly>
+                            </div>
+                            {% if form.secondary_color.errors %}
+                                <div class="invalid-feedback d-block">
+                                    {% for error in form.secondary_color.errors %}{{ error }}{% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            {{ form.accent_color.label(class="form-label") }}
+                            <div class="input-group">
+                                {{ form.accent_color(class="form-control form-control-color" + (' is-invalid' if form.accent_color.errors else ''), type="color") }}
+                                <input type="text" class="form-control" value="{{ form.accent_color.data }}" readonly>
+                            </div>
+                            {% if form.accent_color.errors %}
+                                <div class="invalid-feedback d-block">
+                                    {% for error in form.accent_color.errors %}{{ error }}{% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            {{ form.background_color.label(class="form-label") }}
+                            <div class="input-group">
+                                {{ form.background_color(class="form-control form-control-color" + (' is-invalid' if form.background_color.errors else ''), type="color") }}
+                                <input type="text" class="form-control" value="{{ form.background_color.data }}" readonly>
+                            </div>
+                            {% if form.background_color.errors %}
+                                <div class="invalid-feedback d-block">
+                                    {% for error in form.background_color.errors %}{{ error }}{% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            {{ form.text_color.label(class="form-label") }}
+                            <div class="input-group">
+                                {{ form.text_color(class="form-control form-control-color" + (' is-invalid' if form.text_color.errors else ''), type="color") }}
+                                <input type="text" class="form-control" value="{{ form.text_color.data }}" readonly>
+                            </div>
+                            {% if form.text_color.errors %}
+                                <div class="invalid-feedback d-block">
+                                    {% for error in form.text_color.errors %}{{ error }}{% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <hr class="my-4">
+
+                    <div class="mb-3">
+                        {{ form.footer_text.label(class="form-label") }}
+                        {{ form.footer_text(class="form-control", rows=3) }}
+                    </div>
+
+                    <div class="d-grid">
+                        {{ form.submit(class="btn btn-primary btn-lg") }}
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="card mb-4">
+            <div class="card-header">
+                <strong>Logo du site</strong>
+            </div>
+            <div class="card-body text-center">
+                {% if theme.logo %}
+                    <img src="{{ url_for('static', filename='uploads/' + theme.logo.filename) }}"
+                         alt="Logo actuel"
+                         class="img-fluid mb-3"
+                         style="max-height: 100px;">
+                    <p class="text-muted small">{{ theme.logo.original_filename }}</p>
+                {% else %}
+                    <p class="text-muted">Aucun logo défini</p>
+                {% endif %}
+                <a href="#logoModal" data-bs-toggle="modal" class="btn btn-sm btn-outline-primary">
+                    <i class="bi bi-image"></i> Choisir un logo
+                </a>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-header">
+                <strong>Favicon</strong>
+            </div>
+            <div class="card-body text-center">
+                {% if theme.favicon %}
+                    <img src="{{ url_for('static', filename='uploads/' + theme.favicon.filename) }}"
+                         alt="Favicon actuel"
+                         class="img-fluid mb-3"
+                         style="max-height: 50px;">
+                    <p class="text-muted small">{{ theme.favicon.original_filename }}</p>
+                {% else %}
+                    <p class="text-muted">Aucun favicon défini</p>
+                {% endif %}
+                <a href="#faviconModal" data-bs-toggle="modal" class="btn btn-sm btn-outline-primary">
+                    <i class="bi bi-image"></i> Choisir un favicon
+                </a>
+            </div>
+        </div>
+
+        <div class="card mt-3">
+            <div class="card-header">
+                <strong>Aperçu des couleurs</strong>
+            </div>
+            <div class="card-body">
+                <div class="mb-2">
+                    <small>Primaire</small>
+                    <div style="height: 30px; background-color: {{ theme.primary_color }};" class="border"></div>
+                </div>
+                <div class="mb-2">
+                    <small>Secondaire</small>
+                    <div style="height: 30px; background-color: {{ theme.secondary_color }};" class="border"></div>
+                </div>
+                <div class="mb-2">
+                    <small>Accent</small>
+                    <div style="height: 30px; background-color: {{ theme.accent_color }};" class="border"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Logo Modal -->
+<div class="modal fade" id="logoModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Choisir un logo</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    {% for media in all_media %}
+                    <div class="col-md-3 mb-3">
+                        <div class="card">
+                            <img src="{{ url_for('static', filename='uploads/' + media.filename) }}"
+                                 class="card-img-top"
+                                 alt="{{ media.original_filename }}"
+                                 style="height: 100px; object-fit: contain; padding: 10px;">
+                            <div class="card-body p-2">
+                                <form method="POST" action="{{ url_for('admin.theme_set_logo', media_id=media.id) }}">
+                                    <button type="submit" class="btn btn-sm btn-primary w-100">
+                                        Utiliser
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                    {% else %}
+                    <div class="col-12 text-center text-muted">
+                        Aucun média disponible. <a href="{{ url_for('admin.media_upload') }}">Télécharger un fichier</a>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Favicon Modal -->
+<div class="modal fade" id="faviconModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Choisir un favicon</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    {% for media in all_media %}
+                    <div class="col-md-3 mb-3">
+                        <div class="card">
+                            <img src="{{ url_for('static', filename='uploads/' + media.filename) }}"
+                                 class="card-img-top"
+                                 alt="{{ media.original_filename }}"
+                                 style="height: 100px; object-fit: contain; padding: 10px;">
+                            <div class="card-body p-2">
+                                <form method="POST" action="{{ url_for('admin.theme_set_favicon', media_id=media.id) }}">
+                                    <button type="submit" class="btn btn-sm btn-primary w-100">
+                                        Utiliser
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                    {% else %}
+                    <div class="col-12 text-center text-muted">
+                        Aucun média disponible. <a href="{{ url_for('admin.media_upload') }}">Télécharger un fichier</a>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+// Update color preview when color picker changes
+document.querySelectorAll('input[type="color"]').forEach(input => {
+    input.addEventListener('input', function() {
+        this.nextElementSibling.value = this.value;
+    });
+});
+</script>
+{% endblock %}

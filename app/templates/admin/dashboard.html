@@ -1,0 +1,106 @@
+{% extends "layouts/admin.html" %}
+
+{% block title %}Tableau de bord - Admin{% endblock %}
+
+{% block admin_content %}
+<h2 class="mb-4">Tableau de bord</h2>
+
+<div class="row">
+    <div class="col-md-4 mb-4">
+        <div class="card stat-card">
+            <div class="card-body">
+                <h5 class="card-title text-muted">Pages</h5>
+                <h2 class="mb-0">{{ pages_count }}</h2>
+                <a href="{{ url_for('admin.pages') }}" class="btn btn-sm btn-outline-primary mt-2">
+                    Gérer les pages
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4 mb-4">
+        <div class="card stat-card">
+            <div class="card-body">
+                <h5 class="card-title text-muted">Médias</h5>
+                <h2 class="mb-0">{{ media_count }}</h2>
+                <a href="{{ url_for('admin.media') }}" class="btn btn-sm btn-outline-primary mt-2">
+                    Gérer les médias
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4 mb-4">
+        <div class="card stat-card">
+            <div class="card-body">
+                <h5 class="card-title text-muted">Utilisateurs</h5>
+                <h2 class="mb-0">{{ users_count }}</h2>
+                <a href="{{ url_for('admin.users') }}" class="btn btn-sm btn-outline-primary mt-2">
+                    Gérer les utilisateurs
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mt-4">
+    <div class="col-12">
+        <h4 class="mb-3">Pages récentes</h4>
+        <div class="table-responsive">
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th>Titre</th>
+                        <th>Slug</th>
+                        <th>Statut</th>
+                        <th>Dernière modification</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for page in recent_pages %}
+                    <tr>
+                        <td>{{ page.title }}</td>
+                        <td><code>{{ page.slug }}</code></td>
+                        <td>
+                            {% if page.is_published %}
+                                <span class="badge bg-success">Publié</span>
+                            {% else %}
+                                <span class="badge bg-secondary">Brouillon</span>
+                            {% endif %}
+                        </td>
+                        <td>{{ page.updated_at.strftime('%d/%m/%Y %H:%M') }}</td>
+                        <td>
+                            <a href="{{ url_for('admin.page_edit', id=page.id) }}" class="btn btn-sm btn-outline-primary">
+                                <i class="bi bi-pencil"></i>
+                            </a>
+                        </td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td colspan="5" class="text-center text-muted">Aucune page</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<div class="row mt-4">
+    <div class="col-12">
+        <h4 class="mb-3">Actions rapides</h4>
+        <div class="btn-group" role="group">
+            <a href="{{ url_for('admin.page_new') }}" class="btn btn-primary">
+                <i class="bi bi-plus-circle"></i> Nouvelle page
+            </a>
+            <a href="{{ url_for('admin.media_upload') }}" class="btn btn-success">
+                <i class="bi bi-upload"></i> Télécharger un média
+            </a>
+            <a href="{{ url_for('admin.theme') }}" class="btn btn-info text-white">
+                <i class="bi bi-palette"></i> Personnaliser le thème
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}

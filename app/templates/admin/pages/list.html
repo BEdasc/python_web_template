@@ -1,0 +1,75 @@
+{% extends "layouts/admin.html" %}
+
+{% block title %}Pages - Admin{% endblock %}
+
+{% block admin_content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2>Gestion des pages</h2>
+    <a href="{{ url_for('admin.page_new') }}" class="btn btn-primary">
+        <i class="bi bi-plus-circle"></i> Nouvelle page
+    </a>
+</div>
+
+<div class="table-responsive">
+    <table class="table table-hover">
+        <thead>
+            <tr>
+                <th>Titre</th>
+                <th>Slug</th>
+                <th>Statut</th>
+                <th>Menu</th>
+                <th>Ordre</th>
+                <th>Dernière modification</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for page in pages %}
+            <tr>
+                <td><strong>{{ page.title }}</strong></td>
+                <td><code>{{ page.slug }}</code></td>
+                <td>
+                    {% if page.is_published %}
+                        <span class="badge bg-success">Publié</span>
+                    {% else %}
+                        <span class="badge bg-secondary">Brouillon</span>
+                    {% endif %}
+                </td>
+                <td>
+                    {% if page.show_in_menu %}
+                        <i class="bi bi-check-circle text-success"></i>
+                    {% else %}
+                        <i class="bi bi-x-circle text-muted"></i>
+                    {% endif %}
+                </td>
+                <td>{{ page.menu_order }}</td>
+                <td>{{ page.updated_at.strftime('%d/%m/%Y %H:%M') }}</td>
+                <td>
+                    <div class="btn-group" role="group">
+                        {% if page.is_published %}
+                        <a href="{{ url_for('main.page', slug=page.slug) }}" class="btn btn-sm btn-outline-info" target="_blank">
+                            <i class="bi bi-eye"></i>
+                        </a>
+                        {% endif %}
+                        <a href="{{ url_for('admin.page_edit', id=page.id) }}" class="btn btn-sm btn-outline-primary">
+                            <i class="bi bi-pencil"></i>
+                        </a>
+                        <form method="POST" action="{{ url_for('admin.page_delete', id=page.id) }}" style="display: inline;" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer cette page ?');">
+                            <button type="submit" class="btn btn-sm btn-outline-danger">
+                                <i class="bi bi-trash"></i>
+                            </button>
+                        </form>
+                    </div>
+                </td>
+            </tr>
+            {% else %}
+            <tr>
+                <td colspan="7" class="text-center text-muted py-4">
+                    Aucune page. <a href="{{ url_for('admin.page_new') }}">Créer une page</a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

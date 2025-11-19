@@ -1,0 +1,59 @@
+{% extends "layouts/base.html" %}
+
+{% block title %}{{ theme.site_name if theme else 'Accueil' }}{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        {% if page %}
+            <h1 class="mb-4">{{ page.title }}</h1>
+            <div class="content">
+                {{ page.content|safe }}
+            </div>
+        {% else %}
+            <div class="jumbotron bg-light p-5 rounded-3">
+                <h1 class="display-4">Bienvenue!</h1>
+                <p class="lead">Ceci est un template de site web moderne avec CMS intégré.</p>
+                <hr class="my-4">
+                <p>Les administrateurs peuvent gérer le contenu, les pages, les médias et l'apparence du site.</p>
+                {% if current_user.is_authenticated and current_user.is_admin %}
+                    <a class="btn btn-primary btn-lg" href="{{ url_for('admin.dashboard') }}" role="button">
+                        <i class="bi bi-gear"></i> Accéder au panneau d'administration
+                    </a>
+                {% else %}
+                    <a class="btn btn-primary btn-lg" href="{{ url_for('auth.login') }}" role="button">
+                        Se connecter
+                    </a>
+                {% endif %}
+            </div>
+
+            <div class="row mt-5">
+                <div class="col-md-4">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title"><i class="bi bi-file-text"></i> Gestion de pages</h5>
+                            <p class="card-text">Créez et gérez facilement des pages dynamiques pour votre site.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title"><i class="bi bi-images"></i> Médiathèque</h5>
+                            <p class="card-text">Téléchargez et organisez vos images, logos et autres médias.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title"><i class="bi bi-palette"></i> Personnalisation</h5>
+                            <p class="card-text">Personnalisez les couleurs, le logo et l'apparence de votre site.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
